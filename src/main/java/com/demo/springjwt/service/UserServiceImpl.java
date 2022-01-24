@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User register(String firstName, String lastName, String username, String email) {
+    public User register(String firstName, String lastName, String username, String email, String jobTile, String address) {
         User user = new User();
         String password = generatePassword();
         String encodedPassword = encodedPassword(password);
@@ -61,6 +61,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setRole(ROLE_ADMIN.name());
         user.setEnabled(Boolean.TRUE);
         user.setLocked(Boolean.TRUE);
+        user.setJobTitle(jobTile);
+        user.setAddress(address);
         userRepo.save(user);
         LOGGER.info(password);
         return user;

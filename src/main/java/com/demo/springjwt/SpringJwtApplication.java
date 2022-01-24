@@ -20,7 +20,7 @@ public class SpringJwtApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SpringJwtApplication.class, args);
 	}
-
+	
 	@Bean
 	PasswordEncoder passwordEncoder(){
 		return new BCryptPasswordEncoder();
@@ -45,7 +45,8 @@ public class SpringJwtApplication {
 	@Bean
 	CommandLineRunner run(UserService userService){
 		return args -> {
-			userService.register("Astro", "Smith", "astro", "astro@hotmail.com");
+			userService.register("Astro",
+					"Smith", "astro", "astro@hotmail.com", "IT Technician", "Dream Land");
 		};
 	}
 }

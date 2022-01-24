@@ -10,7 +10,7 @@ public interface UserService {
 
     List<User> findAllUsers();
 
-    User register(String firstName, String lastName, String username, String email);
+    User register(String firstName, String lastName, String username, String email, String jobTile, String address);
 
     User findByUsername(String username);
 

@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
+
 import static com.demo.springjwt.enumeration.Role.ROLE_USER;
 
 @Service
@@ -61,8 +63,7 @@ public class UserApiServiceImpl implements UserApiService{
         user.setLocked(Boolean.TRUE);
         userRepo.save(user);
 
-        String randomString = RandomStringUtils.randomAlphabetic(30);
-        String token = encodedPassword(randomString);
+        String token = UUID.randomUUID().toString();
         ConfirmationToken confirmationToken = new ConfirmationToken(
                 token,
                 LocalDateTime.now(),
@@ -70,7 +71,6 @@ public class UserApiServiceImpl implements UserApiService{
                 user
         );
         confirmationTokenService.saveConfirmationToken(confirmationToken);
-        LOGGER.info("Token : " + token);
 
         String link = "http://localhost:8080/api/users/confirm?token=" + token;
         emailSender.send(user.getEmail(), buildEmail(user.getUsername(), link));

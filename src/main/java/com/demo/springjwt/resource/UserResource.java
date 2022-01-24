@@ -37,7 +37,8 @@ public class UserResource {
 
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody User user){
-        lockAccount(user);
+//        To-do - when user login failed 3 times, account must be locked for a while (30 mins)
+//        lockAccount(user);
         authenticate(user.getUsername(), user.getPassword());
         User loginUser = userService.findByUsername(user.getUsername());
         UserPrincipal userPrincipal = new UserPrincipal(loginUser);

@@ -30,6 +30,8 @@ public class User implements Serializable {
     private String role;
     private String[] authorities;
     private Boolean locked;
+    private String jobTitle;
+    private String address;
     private Boolean enabled;
     private int failedAttempt;
     private Date lockTime;
