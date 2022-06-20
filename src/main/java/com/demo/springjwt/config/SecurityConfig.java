@@ -34,7 +34,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "user/delete/**",
             "/user/resetpassword/**",
             "/api/users/confirm/**",
-            "/employee/**"
+            "/employee/**",
+            "/actuator/**"
     };
 
     @Override
