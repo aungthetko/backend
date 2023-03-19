@@ -2,6 +2,7 @@ package com.demo.springjwt.controller;
 
 import com.demo.springjwt.modal.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +22,10 @@ public class UserApiController {
 
     @PostMapping("/add")
     public ResponseEntity<User> addNewUser(@RequestBody User user){
-        User newUser = userApiService.saveUser(user.getFirstName(), user.getLastName(), user.getUsername(), user.getPassword(), user.getEmail());
-        return ResponseEntity.ok().body(newUser);
+        User newUser = userApiService.saveUser(user.getFirstName(),
+                user.getLastName(), user.getUsername(), user.getPassword(), user.getJobTitle(),
+                user.getEmail());
+        return new ResponseEntity<>(newUser, HttpStatus.CREATED);
     }
 
     @GetMapping(path = "/confirm")

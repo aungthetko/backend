@@ -30,6 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/swagger-ui/**",
             "/webjars/**",
             "/user/login",
+            "/user/register",
             "/user/all",
             "user/delete/**",
             "/user/resetpassword/**",

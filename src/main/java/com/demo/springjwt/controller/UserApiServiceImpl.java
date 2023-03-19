@@ -44,9 +44,10 @@ public class UserApiServiceImpl implements UserApiService{
     }
 
     @Override
-    public User saveUser(String firstName, String lastName, String username, String password, String email) {
+    public User saveUser(String firstName, String lastName, String username, String password,
+                         String jobTitle, String email) {
         User user = new User();
-        User savedEmail = userRepo.findUserByEmail(email);
+        User savedEmail = userRepo.findUserByEmail(email).orElseThrow();
         if (savedEmail != null){
            throw new IllegalStateException("Email already taken");
         }
@@ -55,6 +56,7 @@ public class UserApiServiceImpl implements UserApiService{
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setUsername(username);
+        user.setJobTitle(jobTitle);
         user.setEmail(email);
         user.setPassword(encodedPassword);
         user.setAuthorities(ROLE_USER.getAuthorities());

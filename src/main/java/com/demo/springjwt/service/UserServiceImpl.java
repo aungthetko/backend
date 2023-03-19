@@ -1,6 +1,7 @@
 package com.demo.springjwt.service;
 
 import com.demo.springjwt.enumeration.Role;
+import com.demo.springjwt.exception.EmailNotFoundException;
 import com.demo.springjwt.modal.User;
 import com.demo.springjwt.modal.UserPrincipal;
 import com.demo.springjwt.repo.UserRepo;
@@ -76,11 +77,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User findByEmail(String email) {
-        User user = userRepo.findUserByEmail(email);
-        if (user == null){
-            throw new IllegalStateException("Can not find user with that " + email);
-        }
+    public User findByEmail(String email) throws EmailNotFoundException {
+        User user = userRepo.findUserByEmail(email).stream().findFirst()
+                .orElseThrow(() ->
+                        new EmailNotFoundException("Email Was not found"));
         return user;
     }
 
@@ -102,12 +102,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void resetPassword(String email) {
+    public void resetPassword(String email) throws EmailNotFoundException {
         User user = findByEmail(email);
-        String password = RandomStringUtils.randomAlphabetic(8);
-        user.setPassword(encodedPassword(password));
-        userRepo.save(user);
-        LOGGER.info("New generated password : " + password);
+        if(user != null){
+            String password = RandomStringUtils.randomAlphabetic(8);
+            user.setPassword(encodedPassword(password));
+            userRepo.save(user);
+            LOGGER.info("New generated password : " + password);
+        }
     }
 
     @Override
@@ -131,7 +133,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return RandomStringUtils.randomAlphabetic(8);
     }
 
-    private String encodedPassword(String password){
+    private String encodedPassword(String password) {
         return passwordEncoder.encode(password);
     }
 

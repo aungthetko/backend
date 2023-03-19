@@ -11,7 +11,7 @@ public interface UserApiService {
 
     User findUserById(Long id);
 
-    User saveUser(String firstName, String lastName, String username, String password, String email);
+    User saveUser(String firstName, String lastName, String username, String password,String jobTilte, String email);
 
     User updateUser(Long id, User user);
 

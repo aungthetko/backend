@@ -1,5 +1,6 @@
 package com.demo.springjwt.service;
 
+import com.demo.springjwt.exception.EmailNotFoundException;
 import com.demo.springjwt.modal.User;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +15,9 @@ public interface UserService {
 
     User findByUsername(String username);
 
-    User findByEmail(String email);
+    User findByEmail(String email) throws EmailNotFoundException;
 
-    void resetPassword(String email);
+    void resetPassword(String email) throws EmailNotFoundException;
 
     void deleteUser(String username);
 

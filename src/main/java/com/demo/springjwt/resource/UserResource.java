@@ -1,5 +1,6 @@
 package com.demo.springjwt.resource;
 
+import com.demo.springjwt.exception.EmailNotFoundException;
 import com.demo.springjwt.modal.HttpResponse;
 import com.demo.springjwt.modal.User;
 import com.demo.springjwt.modal.UserPrincipal;
@@ -14,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -46,8 +48,15 @@ public class UserResource {
         return ResponseEntity.ok().headers(jwtHeader).body(loginUser);
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@RequestBody User user){
+        User createdUser = userService.register(user.getFirstName(), user.getLastName(),
+                user.getUsername(), user.getEmail(), user.getJobTitle(), user.getAddress());
+                return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    }
+
     @GetMapping("/resetpassword/{email}")
-    public ResponseEntity<HttpResponse> resetPassword(@PathVariable("email") String email){
+    public ResponseEntity<HttpResponse> resetPassword(@PathVariable("email") String email) throws EmailNotFoundException {
         userService.resetPassword(email);
         return response(HttpStatus.OK, "Password successfully changed");
     }
@@ -94,6 +103,6 @@ public class UserResource {
 
     private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message){
         return new ResponseEntity<>(
-                new HttpResponse(httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(), message.toUpperCase()), httpStatus);
+                new HttpResponse(LocalDateTime.now(), httpStatus.value(), httpStatus, httpStatus.getReasonPhrase().toUpperCase(), message.toUpperCase()), httpStatus);
     }
 }
