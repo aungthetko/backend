@@ -1,6 +1,8 @@
 package com.demo.springjwt.controller;
 
 import com.demo.springjwt.email.EmailSender;
+import com.demo.springjwt.exception.EmailExistException;
+import com.demo.springjwt.exception.EmailNotFoundException;
 import com.demo.springjwt.modal.User;
 import com.demo.springjwt.modal.token.ConfirmationToken;
 import com.demo.springjwt.modal.token.ConfirmationTokenService;
@@ -45,37 +47,37 @@ public class UserApiServiceImpl implements UserApiService{
 
     @Override
     public User saveUser(String firstName, String lastName, String username, String password,
-                         String jobTitle, String email) {
+                         String jobTitle, String email) throws EmailExistException {
         User user = new User();
-        User savedEmail = userRepo.findUserByEmail(email).orElseThrow();
-        if (savedEmail != null){
-           throw new IllegalStateException("Email already taken");
+        User getUser = userRepo.findByEmail(email);
+        if(getUser != null){
+            throw new EmailExistException("Email is already taken");
+        }else {
+            String encodedPassword = encodedPassword(password);
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setUsername(username);
+            user.setJobTitle(jobTitle);
+            user.setEmail(email);
+            user.setPassword(encodedPassword);
+            user.setAuthorities(ROLE_USER.getAuthorities());
+            user.setRole(ROLE_USER.name());
+            user.setEnabled(Boolean.FALSE);
+            user.setLocked(Boolean.TRUE);
+            userRepo.save(user);
+
+            String token = UUID.randomUUID().toString();
+            ConfirmationToken confirmationToken = new ConfirmationToken(
+                    token,
+                    LocalDateTime.now(),
+                    LocalDateTime.now().plusMinutes(15),
+                    user
+            );
+            confirmationTokenService.saveConfirmationToken(confirmationToken);
+
+            String link = "http://localhost:8080/api/users/confirm?token=" + token;
+            emailSender.send(user.getEmail(), buildEmail(user.getUsername(), link));
         }
-
-        String encodedPassword = encodedPassword(password);
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setUsername(username);
-        user.setJobTitle(jobTitle);
-        user.setEmail(email);
-        user.setPassword(encodedPassword);
-        user.setAuthorities(ROLE_USER.getAuthorities());
-        user.setRole(ROLE_USER.name());
-        user.setEnabled(Boolean.FALSE);
-        user.setLocked(Boolean.TRUE);
-        userRepo.save(user);
-
-        String token = UUID.randomUUID().toString();
-        ConfirmationToken confirmationToken = new ConfirmationToken(
-                token,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(15),
-                user
-        );
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
-
-        String link = "http://localhost:8080/api/users/confirm?token=" + token;
-        emailSender.send(user.getEmail(), buildEmail(user.getUsername(), link));
         return user;
     }
 

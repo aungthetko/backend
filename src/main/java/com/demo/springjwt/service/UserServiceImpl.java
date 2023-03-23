@@ -32,6 +32,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
+    private final LogInAttemptService logInAttemptService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -39,8 +40,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException(username + " can not found in database"));
+        validateLoginAttempt(user);
         userRepo.save(user);
         return new UserPrincipal(user);
+    }
+
+    private void validateLoginAttempt(User user) {
+        System.out.println(" Is locked?" + user.getLocked());
+         if(user.getLocked()){
+            if(logInAttemptService.hasExceededMaxAttempts(user.getUsername())){
+                user.setLocked(false);
+            }else{
+                user.setLocked(true);
+            }
+        }else{
+            logInAttemptService.getUserFromLoginAttemptCache(user.getUsername());
+        }
     }
 
     @Override
@@ -65,7 +80,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setJobTitle(jobTile);
         user.setAddress(address);
         userRepo.save(user);
-        LOGGER.info(password);
+        LOGGER.info( password);
         return user;
     }
 
@@ -80,7 +95,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public User findByEmail(String email) throws EmailNotFoundException {
         User user = userRepo.findUserByEmail(email).stream().findFirst()
                 .orElseThrow(() ->
-                        new EmailNotFoundException("Email Was not found"));
+                        new EmailNotFoundException("Email was not found"));
         return user;
     }
 

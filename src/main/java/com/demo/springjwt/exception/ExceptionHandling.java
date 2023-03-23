@@ -12,11 +12,18 @@ import java.time.LocalDateTime;
 public class ExceptionHandling {
 
     public static final String EMAIL_NOT_FOUND = "Email was not found";
+    public static final String EMAIL_EXIST = "Email was not found";
 
     @ExceptionHandler(EmailNotFoundException.class)
     public ResponseEntity<HttpResponse> emailNotFoundException(EmailNotFoundException emailNotFounException){
         return createHttpResponse(HttpStatus.BAD_REQUEST,
                 EMAIL_NOT_FOUND.toUpperCase());
+    }
+
+    @ExceptionHandler(EmailExistException.class)
+    public ResponseEntity<HttpResponse> emailExistException(EmailNotFoundException emailNotFounException){
+        return createHttpResponse(HttpStatus.BAD_REQUEST,
+                EMAIL_EXIST.toUpperCase());
     }
 
     private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message){

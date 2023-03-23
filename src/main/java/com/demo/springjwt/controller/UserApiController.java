@@ -1,5 +1,7 @@
 package com.demo.springjwt.controller;
 
+import com.demo.springjwt.exception.EmailExistException;
+import com.demo.springjwt.exception.EmailNotFoundException;
 import com.demo.springjwt.modal.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +23,7 @@ public class UserApiController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<User> addNewUser(@RequestBody User user){
+    public ResponseEntity<User> addNewUser(@RequestBody User user) throws EmailExistException, EmailNotFoundException {
         User newUser = userApiService.saveUser(user.getFirstName(),
                 user.getLastName(), user.getUsername(), user.getPassword(), user.getJobTitle(),
                 user.getEmail());

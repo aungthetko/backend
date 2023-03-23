@@ -1,5 +1,6 @@
 package com.demo.springjwt.controller;
 
+import com.demo.springjwt.exception.EmailExistException;
 import com.demo.springjwt.modal.User;
 
 import java.util.List;
@@ -11,7 +12,7 @@ public interface UserApiService {
 
     User findUserById(Long id);
 
-    User saveUser(String firstName, String lastName, String username, String password,String jobTilte, String email);
+    User saveUser(String firstName, String lastName, String username, String password,String jobTilte, String email) throws EmailExistException;
 
     User updateUser(Long id, User user);
 

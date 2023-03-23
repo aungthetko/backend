@@ -29,7 +29,7 @@ public class User implements Serializable {
     private String email;
     private String role;
     private String[] authorities;
-    private Boolean locked;
+    public Boolean locked;
     private String jobTitle;
     private String address;
     private Boolean enabled;
