@@ -1,10 +1,8 @@
 package com.demo.springjwt.service;
 
-import com.demo.springjwt.modal.User;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutionException;

@@ -1,5 +1,6 @@
 package com.demo.springjwt.service;
 
+import com.demo.springjwt.email.EmailService;
 import com.demo.springjwt.enumeration.Role;
 import com.demo.springjwt.exception.EmailNotFoundException;
 import com.demo.springjwt.modal.User;
@@ -46,8 +47,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     private void validateLoginAttempt(User user) {
-        System.out.println(" Is locked?" + user.getLocked());
-         if(user.getLocked()){
+        if(user.getLocked()){
             if(logInAttemptService.hasExceededMaxAttempts(user.getUsername())){
                 user.setLocked(false);
             }else{
@@ -80,6 +80,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setJobTitle(jobTile);
         user.setAddress(address);
         userRepo.save(user);
+        // To-do
+        // emailService.sendNewPasswordToEmail(firstName, email, password);
         LOGGER.info( password);
         return user;
     }
@@ -93,6 +95,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User findByEmail(String email) throws EmailNotFoundException {
+        if(email.trim().length() == 0 || email.equals("") || email == null){
+            throw new IllegalStateException("Email can not be empty");
+        }
         User user = userRepo.findUserByEmail(email).stream().findFirst()
                 .orElseThrow(() ->
                         new EmailNotFoundException("Email was not found"));
@@ -148,7 +153,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return RandomStringUtils.randomAlphabetic(8);
     }
 
-    private String encodedPassword(String password) {
+    public String encodedPassword(String password) {
         return passwordEncoder.encode(password);
     }
 
