@@ -1,9 +1,8 @@
 package com.demo.springjwt;
 
-import com.demo.springjwt.exception.EmailNotFoundException;
+import com.demo.springjwt.exception.UserNotFoundException;
 import com.demo.springjwt.modal.User;
 import com.demo.springjwt.repo.UserRepo;
-import com.demo.springjwt.service.LogInAttemptService;
 import com.demo.springjwt.service.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,8 +25,6 @@ public class UserServiceTest {
     UserRepo userRepo;
     @Mock
     PasswordEncoder passwordEncoder;
-    @Mock
-    LogInAttemptService logInAttemptService;
 
     String firstName;
     String lastName;
@@ -56,13 +53,25 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("User's Email Testing")
-    void testFindUser_ifEmailIsEmpty_shouldThrownIllegalStateException(){
+    @DisplayName("Testing Find User By Email")
+    void testFindUserByEmail_ifEmailIsEmpty_shouldThrownIllegalStateException(){
         String email = "";
         String exceptedException = "Email can not be empty";
         IllegalStateException thrown = assertThrows(IllegalStateException.class, () -> {
             userService.findByEmail(email);
         }, "Email should not be empty");
         assertEquals(exceptedException, thrown.getMessage(), "Exception Message");
+
+    }
+
+    @Test
+    @DisplayName("Testing Find User By Username")
+    void testFindUserByUsername_ifUserNotFound_shouldThrown(){
+        String username = "";
+        assertThrows(UserNotFoundException.class, () -> {
+            userService.findByUsername(username);
+        }, "User was not found");
+        Mockito.verify(userRepo, Mockito.times(1))
+                .findUserByUsername(username);
     }
 }

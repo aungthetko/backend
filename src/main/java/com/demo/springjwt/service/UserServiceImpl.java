@@ -3,6 +3,7 @@ package com.demo.springjwt.service;
 import com.demo.springjwt.email.EmailService;
 import com.demo.springjwt.enumeration.Role;
 import com.demo.springjwt.exception.EmailNotFoundException;
+import com.demo.springjwt.exception.UserNotFoundException;
 import com.demo.springjwt.modal.User;
 import com.demo.springjwt.modal.UserPrincipal;
 import com.demo.springjwt.repo.UserRepo;
@@ -87,20 +88,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User findByUsername(String username) {
+    public User findByUsername(String username) throws UserNotFoundException{
         return userRepo.findUserByUsername(username).stream()
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException(username + " is not found"));
+                .orElseThrow(() -> new UserNotFoundException(username + " is not found"));
     }
 
     @Override
-    public User findByEmail(String email) throws EmailNotFoundException {
+    public User findByEmail(String email) throws UserNotFoundException {
         if(email.trim().length() == 0 || email.equals("") || email == null){
             throw new IllegalStateException("Email can not be empty");
         }
         User user = userRepo.findUserByEmail(email).stream().findFirst()
                 .orElseThrow(() ->
-                        new EmailNotFoundException("Email was not found"));
+                        new UserNotFoundException("User was not found"));
         return user;
     }
 

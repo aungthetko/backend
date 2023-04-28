@@ -15,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class UserResource {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody User user){
+    public ResponseEntity<User> register(@RequestBody @Valid User user){
         User createdUser = userService.register(user.getFirstName(), user.getLastName(),
                 user.getUsername(), user.getEmail(), user.getJobTitle(), user.getAddress());
                 return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
@@ -73,7 +74,7 @@ public class UserResource {
     }
 
     @DeleteMapping("/delete/{username}")
-    @PreAuthorize("hasAuthority('user:delete')")
+    // @PreAuthorize("hasAuthority('user:delete')")
     public ResponseEntity<HttpResponse> deleteUser(@PathVariable("username") String username){
         userService.deleteUser(username);
         return response(HttpStatus.OK, "User successfully deleted");
