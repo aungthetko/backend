@@ -32,12 +32,14 @@ public class UserServiceTest {
     String username;
     String jobTitle;
     String address;
+    String password;
 
     @BeforeEach
     void setUp(){
         System.out.println("Execution @BeforeEach method.");
         firstName = "Aung";
         lastName = "Ko";
+        password = "";
         email = "aung@hotmail.com";
         username = "aung";
         jobTitle = "Java Developer";
@@ -48,7 +50,7 @@ public class UserServiceTest {
     @DisplayName("Create User Testing")
     void testCreateUser_whenUserDetailsProvided_returnUserObject(){
         User createdUser =
-                userService.register(firstName, lastName, username, email, jobTitle, address);
+                userService.register(firstName,password, lastName, username, email, jobTitle, address);
         assertNotNull(createdUser, "Register user can not be return null");
     }
 

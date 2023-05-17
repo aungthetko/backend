@@ -28,7 +28,7 @@ public class UserResource {
     private final UserService userService;
     private final JWTTokenProvider jwtTokenProvider;
 
-    @GetMapping
+    @GetMapping("/message")
     public String sayHello(){
         return "Hello World";
     }
@@ -51,9 +51,9 @@ public class UserResource {
 
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody @Valid User user){
-        User createdUser = userService.register(user.getFirstName(), user.getLastName(),
+        User createdUser = userService.register(user.getFirstName(),user.getPassword(), user.getLastName(),
                 user.getUsername(), user.getEmail(), user.getJobTitle(), user.getAddress());
-                return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
     @GetMapping("/resetpassword/{email}")

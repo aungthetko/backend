@@ -65,9 +65,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public User register(String firstName, String lastName, String username, String email, String jobTile, String address) {
+    public User register(String firstName,String password, String lastName, String username, String email, String jobTile, String address) {
         User user = new User();
-        String password = generatePassword();
+        if (password.equals("") || password == null){
+            password = generatePassword();
+        }
         String encodedPassword = encodedPassword(password);
         user.setFirstName(firstName);
         user.setLastName(lastName);
@@ -83,7 +85,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         userRepo.save(user);
         // To-do
         // emailService.sendNewPasswordToEmail(firstName, email, password);
-        LOGGER.info( password);
+        LOGGER.info(password);
         return user;
     }
 

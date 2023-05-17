@@ -31,7 +31,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "/webjars/**",
             "/user/login",
             "/user/register",
-            "/user/all",
             "user/delete/**",
             "/user/resetpassword/**",
             "/api/users/confirm/**",

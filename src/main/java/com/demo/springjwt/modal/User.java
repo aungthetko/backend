@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Date;
@@ -23,6 +24,7 @@ public class User implements Serializable {
     private String lastName;
     private String username;
     private String password;
+    @Email
     private String email;
     private String role;
     private String[] authorities;
