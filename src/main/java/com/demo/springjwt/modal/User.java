@@ -17,14 +17,19 @@ import java.util.Date;
 public class User implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private Long id;
     @Size(min = 2)
+    @Column(nullable = false, length = 50)
     private String firstName;
+    @Column(nullable = false, length = 50)
     private String lastName;
+    @Column(nullable = false, length = 50)
     private String username;
+    @Column(nullable = false)
     private String password;
     @Email
+    @Column(nullable = false,unique = true, length = 120)
     private String email;
     private String role;
     private String[] authorities;

@@ -42,9 +42,9 @@ public class SpringJwtApplication {
 		return new CorsFilter(urlBasedCorsConfigurationSource);
 	}
 
-	@Bean
-	CommandLineRunner run(UserService userService){
-		return args -> userService.register("Astro", "",
-					"Smith", "astro", "astro@hotmail.com", "IT Technician", "Dream Land");
-	}
+//	@Bean
+//	CommandLineRunner run(UserService userService){
+//		return args -> userService.register("Astro", "",
+//					"Smith", "astro", "astro@hotmail.com", "IT Technician", "Dream Land");
+//	}
 }

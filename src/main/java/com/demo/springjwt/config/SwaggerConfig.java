@@ -57,15 +57,19 @@ public class SwaggerConfig {
     }
 
     private SecurityContext securityContext(){
-        return SecurityContext.builder().securityReferences(securityReference()).build();
+        return SecurityContext.builder().securityReferences(securityReference())
+                .build();
     }
 
     private List<SecurityReference> securityReference(){
-        AuthorizationScope[] scopes = { new AuthorizationScope(AUTHORIZATION_SCOPE ,AUTHORIZATION_DESCRIPTION) };
-        return Collections.singletonList(new SecurityReference(SECURITY_REFERENCE, scopes));
+        AuthorizationScope[] scopes = { new AuthorizationScope(AUTHORIZATION_SCOPE
+                ,AUTHORIZATION_DESCRIPTION) };
+        return Collections.singletonList(new SecurityReference(SECURITY_REFERENCE,
+                scopes));
     }
 
     private ApiKey apiKey(){
-        return new ApiKey(SECURITY_REFERENCE, AUTHORIZATION, SecurityScheme.In.HEADER.name());
+        return new ApiKey(SECURITY_REFERENCE, AUTHORIZATION,
+                SecurityScheme.In.HEADER.name());
     }
 }

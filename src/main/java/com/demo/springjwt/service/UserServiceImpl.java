@@ -4,6 +4,7 @@ import com.demo.springjwt.email.EmailService;
 import com.demo.springjwt.enumeration.Role;
 import com.demo.springjwt.exception.EmailNotFoundException;
 import com.demo.springjwt.exception.UserNotFoundException;
+import com.demo.springjwt.kafka.UserProducer;
 import com.demo.springjwt.modal.User;
 import com.demo.springjwt.modal.UserPrincipal;
 import com.demo.springjwt.repo.UserRepo;
@@ -35,6 +36,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
     private final LogInAttemptService logInAttemptService;
+    private final UserProducer userProducer;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -79,10 +81,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setAuthorities(ROLE_ADMIN.getAuthorities());
         user.setRole(ROLE_ADMIN.name());
         user.setEnabled(Boolean.TRUE);
-        user.setLocked(Boolean.TRUE);
+        user.setLocked(Boolean.FALSE);
         user.setJobTitle(jobTile);
         user.setAddress(address);
-        userRepo.save(user);
+        userProducer.sendMessage(user);
+        // userRepo.save(user);
         // To-do
         // emailService.sendNewPasswordToEmail(firstName, email, password);
         LOGGER.info(password);

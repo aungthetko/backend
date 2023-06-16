@@ -7,22 +7,25 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestPropertySource("classpath:application.yml")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserResourceIntegrationTest {
 
     @Autowired
     private TestRestTemplate testRestTemplate;
     private JSONObject json;
+    private String authorizationToken;
 
     @BeforeEach
     void setup() throws JSONException {
@@ -59,25 +62,21 @@ public class UserResourceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get message / require JWT")
+    @DisplayName("Get message | require JWT")
     @Order(2)
     void testGetUsers_WhenMissingJWT_return403(){
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("Accept", "application/json");
+        // Arrange
+        // Act
+        ResponseEntity<User> response = testRestTemplate.getForEntity(
+                "/user/all", User.class);
 
-        HttpEntity httpEntity = new HttpEntity(null, httpHeaders);
-
-        ResponseEntity<String> response = testRestTemplate.exchange("/user/message",
-                HttpMethod.GET,
-                httpEntity,
-                String.class);
         // Assert
         assertEquals(HttpStatus.FORBIDDEN, response.getStatusCode(),
-                "HttpStatusCode 403 should has been return");
+                "HTTP Status should return 403 | FORBIDDEN");
     }
 
     @Test
-    @DisplayName("/login user - return JWT Token")
+    @DisplayName("Login user | return JWT Token")
     @Order(3)
     void testLoginUser_whenValidReturnJWTTokenHeader() throws JSONException {
         HttpHeaders headers = new HttpHeaders();
@@ -93,8 +92,40 @@ public class UserResourceIntegrationTest {
         ResponseEntity<User> response = testRestTemplate.postForEntity("/user/login",
                 request, User.class);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode(), "HttpStatus code should be 200");
-        assertNotNull(response.getHeaders().getValuesAsList("Jwt-Token")
-                .get(0), "Response should be contain Jwt-Token with JWT token");
+        authorizationToken = response.getHeaders()
+                .getValuesAsList("Jwt-Token")
+                .get(0);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode(),
+                "HttpStatus code should be 200");
+        assertNotNull(authorizationToken,
+                "Response should be contain Jwt-Token with JWT token");
+    }
+
+    @Test
+    @DisplayName("Test get user | valid JWT Token")
+    @Order(4)
+    void testGetUsers_whenValidJWTTokenProvide_returnUser(){
+        // Arrange
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        httpHeaders.set("Authorization", "Bearer " + authorizationToken);
+        HttpEntity requestEntity = new HttpEntity(httpHeaders);
+
+        // Act
+        ResponseEntity<List<User>> response = testRestTemplate.exchange(
+                "/user/all",
+                HttpMethod.GET,
+                requestEntity,
+                new ParameterizedTypeReference<List<User>>() {
+                }
+        );
+
+        //Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode(),
+                "HttpStatus should return 200 OK");
+        assertTrue(response.getBody().size() > 0,
+                "The number of response body size should has at least 1");
+
     }
 }
